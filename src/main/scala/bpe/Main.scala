@@ -70,6 +70,16 @@ object Main extends App {
             .action((x, c) => c.copy(outputFile = x))
             .text("path to the output file"),
         ),
+      cmd("decode")
+        .action((_, c) => c.copy(mode = "decode"))
+        .text("decodes an encoded input file with the given bpe vocabulary")
+        .children(
+          opt[String]('o', "output-file")
+            .required()
+            .valueName("<path>")
+            .action((x, c) => c.copy(outputFile = x))
+            .text("path to the output file"),
+        )
     )
   }
 

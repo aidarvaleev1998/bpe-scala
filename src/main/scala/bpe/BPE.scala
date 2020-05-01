@@ -45,6 +45,8 @@ object BPE {
           }
       case "encode" =>
         runWithVocab(Encode)
+      case "decode" =>
+        runWithVocab(Decode)
       case "" =>
         println(s"${Console.RED}Error: Command to run is not chosen")
         system.terminate()
