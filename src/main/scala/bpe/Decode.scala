@@ -20,7 +20,7 @@ object Decode extends BuildableWithVocab {
       .map(
         _.map(tryToInt)
           .collect{ case Some(v) => v }
-          .map(i => id2token.getOrElse(i, "<unk>"))
+          .map(i => id2token.getOrElse(i, config.unkToken))
           .map(_.replaceAll(" ", ""))
           .map(_.replaceAll(config.eowToken, " "))
           .mkString

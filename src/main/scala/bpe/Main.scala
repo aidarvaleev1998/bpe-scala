@@ -10,7 +10,8 @@ case class Config(
     maxNgramLen: Int = 3,
     minCount: Int = 10,
     vocabSize: Int = 1024,
-    eowToken: String = "<eow>"
+    eowToken: String = "<eow>",
+    unkToken: String = "<unk>",
 )
 
 object Main extends App {
@@ -59,6 +60,9 @@ object Main extends App {
           opt[String]('e', "eow")
             .action((x, c) => c.copy(eowToken = x))
             .text("eow - end of word token"),
+          opt[String]('u', "unk")
+            .action((x, c) => c.copy(unkToken = x))
+            .text("unk - unknown token"),
         ),
       cmd("encode")
         .action((_, c) => c.copy(mode = "encode"))

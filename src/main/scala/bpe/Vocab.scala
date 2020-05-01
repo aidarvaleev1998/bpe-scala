@@ -27,10 +27,10 @@ object Vocab {
       )
   }
 
-  def sortByCount(minCount: Int): Flow[Map[String, Int], String, NotUsed] =
+  def sortByCount(minCount: Int, unkToken: String): Flow[Map[String, Int], String, NotUsed] =
     Flow[Map[String, Int]]
       .mapConcat(
-        _.toList
+        unkToken +: _.toList
           .filter(_.count >= minCount)
           .sortBy(_.count)
           .reverse
@@ -44,7 +44,7 @@ object Vocab {
       .via(Counter.counter)
       .via(wordToNgrams(config))
       .via(Counter.counter)
-      .via(sortByCount(config.minCount))
+      .via(sortByCount(config.minCount, config.unkToken))
       .take(config.vocabSize)
 
   def build(config: Config): RunnableGraph[Future[IOResult]] = {

@@ -28,7 +28,7 @@ object Encode extends BuildableWithVocab {
             case ((acc, _, _), _) if token2id.contains(acc) =>
               ("", true, token2id.getOrElse(acc, 0))
             case ((_, _, _), _) =>
-              ("", false, 0)
+              ("", true, 0)
           }
           .filter(_._2)
           .map(_._3)
