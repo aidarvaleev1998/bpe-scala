@@ -110,13 +110,14 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     val (pub, sub) =
       TestSource
         .probe[Map[String, Int]]
-        .via(Vocab.sortByCount(3))
+        .via(Vocab.sortByCount(3, "<unk>"))
         .toMat(TestSink.probe[String])(Keep.both)
         .run()
 
-    sub.request(n = 3)
+    sub.request(n = 4)
     pub.sendNext(Map(("e", 20), ("bcaa", 2), ("c", 4), ("a", 21)))
     pub.sendComplete()
+    sub.expectNext("<unk>")
     sub.expectNext("a")
     sub.expectNext("e")
     sub.expectNext("c")
@@ -131,13 +132,14 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     val (pub, sub) =
       TestSource
         .probe[Map[String, Int]]
-        .via(Vocab.sortByCount(21))
+        .via(Vocab.sortByCount(21, "<unk>"))
         .toMat(TestSink.probe[String])(Keep.both)
         .run()
 
     sub.request(2)
     pub.sendNext(Map(("e", 20), ("bcaa", 2), ("c", 4), ("a", 21)))
     pub.sendComplete()
+    sub.expectNext("<unk>")
     sub.expectNext("a")
     sub.expectComplete()
 
@@ -156,11 +158,12 @@ class VocabSpec extends AnyFlatSpec with Matchers {
         .toMat(TestSink.probe[String])(Keep.both)
         .run()
 
-    sub.request(20)
+    sub.request(21)
     pub.sendNext("aa aa aa bb bb cc cc")
     pub.sendNext("bb bb cc cc cc ddd ddd")
     pub.sendNext("eee")
     pub.sendComplete()
+    sub.expectNext(config.unkToken)
     sub.expectNext(eow)
     sub.expectNext("c")
     sub.expectNext("b")
@@ -177,7 +180,7 @@ class VocabSpec extends AnyFlatSpec with Matchers {
   "computeVocab" should "generate vocabulary limited by vocab size" in {
     implicit val system: ActorSystem = ActorSystem("test")
 
-    val config = Config(minCount = 2, vocabSize = 16)
+    val config = Config(minCount = 2, vocabSize = 17)
     val eow    = config.eowToken
     val (pub, sub) =
       TestSource
@@ -186,11 +189,12 @@ class VocabSpec extends AnyFlatSpec with Matchers {
         .toMat(TestSink.probe[String])(Keep.both)
         .run()
 
-    sub.request(16)
+    sub.request(17)
     pub.sendNext("aa aa aa bb bb cc cc")
     pub.sendNext("bb bb cc cc cc ddd ddd")
     pub.sendNext("eee")
     pub.sendComplete()
+    sub.expectNext(config.unkToken)
     sub.expectNext(eow)
     sub.expectNext("c")
     sub.expectNext("b")
