@@ -1,9 +1,11 @@
 package bpe
 
+import java.nio.file.Paths
+
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import akka.actor.ActorSystem
 import akka.stream.IOResult
-import akka.stream.scaladsl.RunnableGraph
+import akka.stream.scaladsl.{FileIO, RunnableGraph}
 
 import scala.util.{Failure, Success}
 
@@ -22,7 +24,7 @@ object BPE {
       case "build" =>
         Vocab
           .build(config)
-          .run()
+          .runWith(FileIO.toPath(Paths.get(config.vocabFile)))
           .onComplete {
             case Success(_) =>
               system.terminate()

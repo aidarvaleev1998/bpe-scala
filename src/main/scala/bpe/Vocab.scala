@@ -5,7 +5,7 @@ import java.nio.file.Paths
 import scala.concurrent.Future
 import akka.NotUsed
 import akka.stream.IOResult
-import akka.stream.scaladsl.{FileIO, Flow, Keep, RunnableGraph, Sink}
+import akka.stream.scaladsl.{FileIO, Flow, Keep, RunnableGraph, Sink, Source}
 import akka.util.ByteString
 import bpe.syntax.tokenCount._
 
@@ -45,18 +45,13 @@ object Vocab {
       .via(wordToNgrams(config))
       .via(Counter.counter)
       .via(sortByCount(config.minCount))
-      .map(s => {
-        println(s)
-        s
-      })
       .take(config.vocabSize)
 
-  def build(config: Config): RunnableGraph[Future[IOResult]] = {
+  def build(config: Config): Source[ByteString, Future[IOResult]] = {
     FileIO
       .fromPath(Paths.get(config.inputFile))
       .map(_.utf8String)
       .via(computeVocab(config))
       .map(t => ByteString(t + "\n"))
-      .to(FileIO.toPath(Paths.get(config.vocabFile)))
   }
 }
