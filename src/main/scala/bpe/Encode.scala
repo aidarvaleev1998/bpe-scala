@@ -38,7 +38,6 @@ object Encode extends BuildableWithVocab {
 
   def build(vocab: Vector[String], config: Config): RunnableGraph[Future[IOResult]] = {
     val token2id: Map[String, Int] = vocab.zipWithIndex.toMap
-    println(token2id)
     FileIO
       .fromPath(Paths.get(config.inputFile))
       .mapConcat(_.utf8String.split("\n"))
