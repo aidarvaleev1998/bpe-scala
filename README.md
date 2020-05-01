@@ -7,4 +7,5 @@ This repository provides an implementation of Byte-Pair Encoding on Scala.
 ```bash
 run --help
 run build -i data.ru -v data.vocab
+run encode -i data.ru -v data.vocab
 ```

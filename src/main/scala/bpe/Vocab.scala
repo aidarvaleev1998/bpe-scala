@@ -59,6 +59,6 @@ object Vocab {
   def load(config: Config): RunnableGraph[Future[Vector[String]]] =
     FileIO
       .fromPath(Paths.get(config.vocabFile))
-      .map(_.utf8String)
+      .mapConcat(_.utf8String.split("\n"))
       .toMat(Sink.collection[String, Vector[String]])(Keep.right)
 }
