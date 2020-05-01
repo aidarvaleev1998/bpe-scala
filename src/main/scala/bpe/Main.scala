@@ -60,6 +60,16 @@ object Main extends App {
             .action((x, c) => c.copy(eowToken = x))
             .text("eow - end of word token"),
         ),
+      cmd("encode")
+        .action((_, c) => c.copy(mode = "encode"))
+        .text("encodes an input data file with the given bpe vocabulary")
+        .children(
+          opt[String]('o', "output-file")
+            .required()
+            .valueName("<path>")
+            .action((x, c) => c.copy(outputFile = x))
+            .text("path to the output file"),
+        ),
     )
   }
 

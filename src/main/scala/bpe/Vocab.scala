@@ -5,7 +5,7 @@ import java.nio.file.Paths
 import scala.concurrent.Future
 import akka.NotUsed
 import akka.stream.IOResult
-import akka.stream.scaladsl.{FileIO, Flow, Keep, RunnableGraph}
+import akka.stream.scaladsl.{FileIO, Flow, Keep, RunnableGraph, Sink}
 import akka.util.ByteString
 import bpe.syntax.tokenCount._
 
@@ -55,4 +55,10 @@ object Vocab {
       .map(t => ByteString(t + "\n"))
       .toMat(FileIO.toPath(Paths.get(config.vocabFile)))(Keep.right)
   }
+
+  def load(config: Config): RunnableGraph[Future[Vector[String]]] =
+    FileIO
+      .fromPath(Paths.get(config.vocabFile))
+      .map(_.utf8String)
+      .toMat(Sink.collection[String, Vector[String]])(Keep.right)
 }
