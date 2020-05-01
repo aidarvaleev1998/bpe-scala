@@ -1,17 +1,9 @@
 package bpe
 
-import java.nio.file.Paths
-
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.ExecutionContextExecutor
 import akka.actor.ActorSystem
-import akka.stream.IOResult
-import akka.stream.scaladsl.{FileIO, RunnableGraph}
 
 import scala.util.{Failure, Success}
-
-trait BuildableWithVocab {
-  def build(vocab: Vector[String], config: Config): RunnableGraph[Future[IOResult]]
-}
 
 object BPE {
   def run(config: Config): Unit = {
@@ -22,7 +14,7 @@ object BPE {
       case "build" =>
         Vocab
           .build(config)
-          .runWith(FileIO.toPath(Paths.get(config.vocabFile)))
+          .run()
           .onComplete {
             case Success(_) =>
               system.terminate()
