@@ -10,9 +10,7 @@ import akka.stream.scaladsl.{FileIO, RunnableGraph}
 import scala.util.{Failure, Success}
 
 trait BuildableWithVocab {
-  def build (
-              vocab: Vector[String],
-              config: Config): RunnableGraph[Future[IOResult]]
+  def build(vocab: Vector[String], config: Config): RunnableGraph[Future[IOResult]]
 }
 
 object BPE {

@@ -11,7 +11,7 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     implicit val system: ActorSystem = ActorSystem("test")
 
     val config = Config(maxNgramLen = 1)
-    val eow = config.eowToken
+    val eow    = config.eowToken
     val (pub, sub) =
       TestSource
         .probe[Map[String, Int]]
@@ -22,9 +22,7 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     sub.request(n = 8)
     pub.sendNext(Map(("abc", 3), ("bla", 2)))
     pub.sendComplete()
-    sub.expectNextUnordered(
-      ("a", 3), ("b", 3), ("c", 3), (eow, 3),
-      ("b", 2), ("l", 2), ("a", 2), (eow, 2))
+    sub.expectNextUnordered(("a", 3), ("b", 3), ("c", 3), (eow, 3), ("b", 2), ("l", 2), ("a", 2), (eow, 2))
     sub.expectComplete()
 
     system.terminate()
@@ -34,7 +32,7 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     implicit val system: ActorSystem = ActorSystem("test")
 
     val config = Config(maxNgramLen = 2)
-    val eow = config.eowToken
+    val eow    = config.eowToken
     val (pub, sub) =
       TestSource
         .probe[Map[String, Int]]
@@ -46,10 +44,21 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     pub.sendNext(Map(("abc", 3), ("bla", 2)))
     pub.sendComplete()
     sub.expectNextUnordered(
-      ("a", 3), ("b", 3), ("c", 3), (eow, 3),
-      ("a b", 3), ("b c", 3), (s"c $eow", 3),
-      ("b", 2), ("l", 2), ("a", 2), (eow, 2),
-      ("b l", 2), ("l a", 2), (s"a $eow", 2))
+      ("a", 3),
+      ("b", 3),
+      ("c", 3),
+      (eow, 3),
+      ("a b", 3),
+      ("b c", 3),
+      (s"c $eow", 3),
+      ("b", 2),
+      ("l", 2),
+      ("a", 2),
+      (eow, 2),
+      ("b l", 2),
+      ("l a", 2),
+      (s"a $eow", 2)
+    )
     sub.expectComplete()
 
     system.terminate()
@@ -59,7 +68,7 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     implicit val system: ActorSystem = ActorSystem("test")
 
     val config = Config()
-    val eow = config.eowToken
+    val eow    = config.eowToken
     val (pub, sub) =
       TestSource
         .probe[Map[String, Int]]
@@ -71,12 +80,25 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     pub.sendNext(Map(("abc", 3), ("bla", 2)))
     pub.sendComplete()
     sub.expectNextUnordered(
-      ("a", 3), ("b", 3), ("c", 3), (eow, 3),
-      ("a b", 3), ("b c", 3), (s"c $eow", 3),
-      ("a b c", 3), (s"b c $eow", 3),
-      ("b", 2), ("l", 2), ("a", 2), (eow, 2),
-      ("b l", 2), ("l a", 2), (s"a $eow", 2),
-      ("b l a", 2), (s"l a $eow", 2))
+      ("a", 3),
+      ("b", 3),
+      ("c", 3),
+      (eow, 3),
+      ("a b", 3),
+      ("b c", 3),
+      (s"c $eow", 3),
+      ("a b c", 3),
+      (s"b c $eow", 3),
+      ("b", 2),
+      ("l", 2),
+      ("a", 2),
+      (eow, 2),
+      ("b l", 2),
+      ("l a", 2),
+      (s"a $eow", 2),
+      ("b l a", 2),
+      (s"l a $eow", 2)
+    )
     sub.expectComplete()
 
     system.terminate()
@@ -126,7 +148,7 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     implicit val system: ActorSystem = ActorSystem("test")
 
     val config = Config(minCount = 2)
-    val eow = config.eowToken
+    val eow    = config.eowToken
     val (pub, sub) =
       TestSource
         .probe[String]
@@ -144,8 +166,8 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     sub.expectNext("b")
     sub.expectNextUnordered("a", "d")
     sub.expectNextUnordered(s"c $eow", "c c", s"c c $eow")
-    sub.expectNextUnordered(s"b $eow",s"b b $eow", "b b", "d d")
-    sub.expectNextUnordered(s"a $eow",s"a a $eow", "a a", "e")
+    sub.expectNextUnordered(s"b $eow", s"b b $eow", "b b", "d d")
+    sub.expectNextUnordered(s"a $eow", s"a a $eow", "a a", "e")
     sub.expectNextUnordered(s"d $eow", s"d d $eow", "d d d", "e e")
     sub.expectComplete()
 
@@ -156,7 +178,7 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     implicit val system: ActorSystem = ActorSystem("test")
 
     val config = Config(minCount = 2, vocabSize = 16)
-    val eow = config.eowToken
+    val eow    = config.eowToken
     val (pub, sub) =
       TestSource
         .probe[String]
@@ -174,8 +196,8 @@ class VocabSpec extends AnyFlatSpec with Matchers {
     sub.expectNext("b")
     sub.expectNextUnordered("a", "d")
     sub.expectNextUnordered(s"c $eow", "c c", s"c c $eow")
-    sub.expectNextUnordered(s"b $eow",s"b b $eow", "b b", "d d")
-    sub.expectNextUnordered(s"a $eow",s"a a $eow", "a a", "e")
+    sub.expectNextUnordered(s"b $eow", s"b b $eow", "b b", "d d")
+    sub.expectNextUnordered(s"a $eow", s"a a $eow", "a a", "e")
     sub.expectComplete()
 
     system.terminate()
